@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>数学课堂练习08 · 互动讲解</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "PingFang SC","Microsoft YaHei",sans-serif; background:#f4f6fb; color:#2b3245; }
+  header { background:linear-gradient(135deg,#4a6cf7,#7a4af7); color:#fff; padding:22px 20px; text-align:center; }
+  header h1 { font-size:22px; margin-bottom:6px; }
+  header p { font-size:13px; opacity:.9; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:14px; background:#fff; position:sticky; top:0; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+  nav button { border:none; background:#eef1fb; color:#405; padding:8px 14px; border-radius:20px; cursor:pointer; font-size:13px; }
+  nav button.active { background:#4a6cf7; color:#fff; }
+  section.card { display:none; max-width:860px; margin:20px auto; background:#fff; border-radius:14px; padding:22px; box-shadow:0 4px 16px rgba(40,60,120,.08); }
+  section.card.show { display:block; }
+  h2 { font-size:18px; color:#3a4bd7; margin-bottom:4px; }
+  h3 { font-size:15px; color:#4a6cf7; margin:14px 0 6px; }
+  p, li { font-size:14px; line-height:1.8; }
+  .tip { background:#fff8e6; border-left:4px solid #f7b84a; padding:10px 12px; border-radius:6px; margin:10px 0; font-size:13.5px; }
+  .key { background:#eef3ff; border-left:4px solid #4a6cf7; padding:10px 12px; border-radius:6px; margin:10px 0; font-size:14px; }
+  .ans { color:#d6453d; font-weight:bold; }
+  svg { display:block; margin:10px auto; background:#fcfdff; border:1px solid #e6eaf6; border-radius:10px; }
+  .ctrl { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:10px 0; font-size:13.5px; }
+  .ctrl input[type=range] { flex:1; min-width:180px; accent-color:#4a6cf7; }
+  .btn { background:#4a6cf7; color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13.5px; }
+  .btn.ghost { background:#eef1fb; color:#3a4bd7; }
+  .readout { font-family:"SF Mono",Consolas,monospace; background:#f2f5ff; border-radius:8px; padding:10px 14px; font-size:14px; margin:10px 0; line-height:1.9; }
+  .hl { stroke:#ff5a3c !important; stroke-width:4 !important; }
+  .hlpt { fill:#ff5a3c !important; }
+  .steps button { margin:4px 4px 4px 0; }
+  .steptext { background:#f6f8ff; border-radius:8px; padding:12px 14px; min-height:52px; font-size:14px; line-height:1.8; margin-top:8px; }
+  .casebtn.on { background:#d6453d; }
+  table { border-collapse:collapse; margin:8px 0; font-size:13.5px; }
+  td,th { border:1px solid #dfe4f5; padding:5px 12px; }
+  th { background:#eef3ff; }
+
+  /* ===== 液态玻璃主界面 ===== */
+  body{background:linear-gradient(135deg,#eef2ff 0%,#f6f0ff 50%,#eafaf3 100%);background-attachment:fixed;}
+  .blob{position:fixed;border-radius:50%;filter:blur(85px);z-index:0;pointer-events:none;opacity:.55;}
+  .b1{width:440px;height:440px;background:#93b4ff;top:-130px;left:-130px;animation:drift1 20s ease-in-out infinite alternate;}
+  .b2{width:400px;height:400px;background:#dcb6ff;bottom:-150px;right:-110px;animation:drift2 24s ease-in-out infinite alternate;}
+  .b3{width:320px;height:320px;background:#a9ecd9;top:38%;left:62%;animation:drift3 27s ease-in-out infinite alternate;}
+  @keyframes drift1{to{transform:translate(70px,60px) scale(1.18);}}
+  @keyframes drift2{to{transform:translate(-60px,-70px) scale(1.12);}}
+  @keyframes drift3{to{transform:translate(-50px,60px) scale(1.2);}}
+  header{position:relative;z-index:1;background:rgba(84,110,250,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.35);}
+  nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.66);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.7);}
+  nav button{background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.8);backdrop-filter:blur(6px);transition:all .25s;}
+  nav button.active{background:linear-gradient(135deg,#4a6cf7,#7a4af7);box-shadow:0 4px 14px rgba(90,90,240,.35);transform:translateY(-1px);}
+  section.card{position:relative;z-index:1;background:rgba(255,255,255,.72);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.85);box-shadow:0 8px 32px rgba(60,80,160,.12);transition:transform .3s,box-shadow .3s;}
+  section.card:hover{transform:translateY(-2px);box-shadow:0 14px 42px rgba(60,80,160,.18);}
+  section.card.show{animation:cardIn .45s cubic-bezier(.2,.7,.3,1) both;}
+  @keyframes cardIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+  .key{background:rgba(238,243,255,.8);backdrop-filter:blur(8px);}
+  .tip{background:rgba(255,248,230,.85);backdrop-filter:blur(8px);}
+  .readout{background:rgba(242,245,255,.85);backdrop-filter:blur(8px);}
+  .btn{background:linear-gradient(135deg,#4a6cf7,#7a4af7);box-shadow:0 4px 14px rgba(90,90,240,.3);transition:all .25s;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(90,90,240,.4);}
+  .btn.ghost{background:rgba(238,241,251,.85);border:1px solid rgba(160,170,240,.4);}
+  .opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border:2px solid rgba(200,208,240,.8);border-radius:10px;background:rgba(250,251,255,.8);cursor:pointer;font-size:14.5px;line-height:1.6;transition:all .25s;}
+  .opt.ok{border-color:#2fae7d;background:rgba(234,255,245,.9);}
+  .opt.bad{border-color:#d6453d;background:rgba(255,240,239,.9);}
+  .opt .why{display:none;font-size:13px;color:#667;margin-top:4px;}
+  .opt.ok .why,.opt.bad .why{display:block;}
+  svg{background:rgba(252,253,255,.85);border:1px solid rgba(220,226,250,.9);border-radius:10px;}
+  /* ===== 启动动画 ===== */
+  #splash{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(1200px 700px at 30% 20%,#3a56d6,#1b2350 70%);transition:opacity .8s ease;cursor:pointer;overflow:hidden;}
+  #splash.gone{opacity:0;pointer-events:none;}
+  #splash .halo{position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(140,160,255,.35),transparent 65%);animation:halo 3s ease-in-out infinite;}
+  @keyframes halo{0%,100%{transform:scale(1);opacity:.7;}50%{transform:scale(1.25);opacity:1;}}
+  .sp-word span{display:inline-block;font-size:min(15vw,74px);font-weight:800;letter-spacing:.06em;background:linear-gradient(120deg,#fff,#bcd0ff 45%,#e7c8ff);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;filter:blur(14px);transform:translateY(46px) scale(.9);animation:spIn .85s cubic-bezier(.2,.75,.3,1) forwards;animation-delay:calc(.35s + var(--i)*.13s);text-shadow:0 0 40px rgba(150,170,255,.0);}
+  @keyframes spIn{60%{opacity:1;filter:blur(0);transform:translateY(-6px) scale(1.02);}100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1);}}
+  .sp-sub{margin-top:26px;color:#c9d4ff;font-size:15px;letter-spacing:.5em;opacity:0;animation:spSub 1s ease .75s forwards;}
+  @keyframes spSub{from{opacity:0;transform:translateY(14px);letter-spacing:1em;}to{opacity:.95;transform:none;letter-spacing:.5em;}}
+  .sp-bar{margin-top:34px;width:230px;height:3px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;}
+  .sp-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8fb0ff,#e7c8ff);animation:spBar 2.6s linear .3s forwards;}
+  @keyframes spBar{to{width:100%;}}
+  .sp-skip{position:absolute;bottom:26px;color:rgba(255,255,255,.55);font-size:12px;letter-spacing:.2em;opacity:0;animation:spSub .8s ease 1.4s forwards;}
+  /* ===== 设备选择 ===== */
+  #devOverlay{position:fixed;inset:0;background:rgba(30,40,80,.45);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
+  #devOverlay .devBox{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);border-radius:20px;padding:34px 44px;text-align:center;box-shadow:0 12px 44px rgba(20,30,80,.3);border:1px solid rgba(255,255,255,.9);animation:cardIn .5s ease both;}
+  #devOverlay h2{font-size:20px;margin-bottom:20px;color:#2b3245;}
+  #devOverlay button{display:block;width:240px;margin:12px auto;padding:15px;font-size:17px;border:none;border-radius:14px;cursor:pointer;color:#fff;font-weight:bold;transition:all .25s;}
+  #devOverlay button:hover{transform:translateY(-2px) scale(1.02);}
+  #pickPC{background:linear-gradient(135deg,#4a6cf7,#7a4af7);box-shadow:0 6px 18px rgba(90,90,240,.4);}
+  #pickMobile{background:linear-gradient(135deg,#2fae7d,#4ac2f7);box-shadow:0 6px 18px rgba(60,190,190,.4);}
+  #devOverlay small{color:#889;}
+  #fab{display:none;position:fixed;right:14px;bottom:14px;z-index:60;width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,#4a6cf7,#7a4af7);color:#fff;font-size:20px;box-shadow:0 6px 18px rgba(60,60,200,.4);cursor:pointer;}
+  /* ===== 手机端适配 ===== */
+  body.mobile{font-size:15px;}
+  body.mobile .blob{opacity:.4;}
+  body.mobile header h1{font-size:19px;} body.mobile header p{font-size:12px;}
+  body.mobile nav{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px;}
+  body.mobile nav button{padding:10px 15px;font-size:14px;flex:0 0 auto;}
+  body.mobile section.card{margin:12px;padding:15px;border-radius:14px;}
+  body.mobile h2{font-size:16.5px;} body.mobile h3{font-size:14.5px;}
+  body.mobile p,body.mobile li{font-size:14.5px;}
+  body.mobile svg{width:100%;height:auto;max-width:560px;}
+  body.mobile .ctrl{flex-direction:column;align-items:stretch;gap:8px;}
+  body.mobile .btn{padding:12px 18px;font-size:15px;}
+  body.mobile .readout{font-size:15px;padding:12px;}
+  body.mobile .tip,.key{font-size:14px;}
+  body.mobile #fab{display:block;}
+</style>
+</head>
+<body>
+
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div id="splash">
+  <div class="halo"></div>
+  <div class="sp-word"><span style="--i:0">G</span><span style="--i:1">Z</span><span style="--i:2">2</span><span style="--i:3">0</span><span style="--i:4">0</span><span style="--i:5">8</span><span style="--i:6">3</span><span style="--i:7">0</span></div>
+  <div class="sp-sub">数学课堂练习 · 互动讲解</div>
+  <div class="sp-bar"><i></i></div>
+  <div class="sp-skip">点击任意处跳过</div>
+</div>
+<div id="devOverlay"><div class="devBox">
+  <h2>📐 选择你的设备</h2>
+  <button id="pickPC">🖥️ 电脑端（横屏大图）</button>
+  <button id="pickMobile">📱 手机端（竖屏触控）</button>
+  <small>之后可用右下角按钮随时切换</small>
+</div></div>
+<button id="fab" title="切换设备">🖥️</button>
+<header>
+  <h1>✨ 数学课堂练习08 · 全卷互动讲解</h1>
+  <p>全卷20题 · 液态玻璃版 · 拖动、点击，自己探索！</p>
+</header>
+<nav id="nav">
+  <button data-t="q1" class="active">1 一元二次方程</button>
+  <button data-t="q2">2 黄金分割</button>
+  <button data-t="q3">3 平行线分线段</button>
+  <button data-t="q4">4 反例图</button>
+  <button data-t="q5">5 韦达定理</button>
+  <button data-t="q6">6 双循环赛</button>
+  <button data-t="q7">7 矩形最小值</button>
+  <button data-t="q8">8 相似三角形</button>
+  <button data-t="q9">9 比例求值</button>
+  <button data-t="q10">10 坐标正方形</button>
+  <button data-t="q11">11 小孔成像</button>
+  <button data-t="q12">12 装裱方程</button>
+  <button data-t="q13">13 矩形综合</button>
+  <button data-t="q14">14 解方程</button>
+  <button data-t="q15">15 位似作图</button>
+  <button data-t="q16">16 内接正方形</button>
+  <button data-t="q17">17 降价利润</button>
+  <button data-t="q18">18 对称方程</button>
+  <button data-t="q19">19 菱形矩形</button>
+  <button data-t="q20">20 垂对三等分</button>
+</nav>
+
+
+<!-- ================= 第1题 ================= -->
+<section class="card show" id="q1">
+  <h2>选择题第1题 · 一元二次方程的判断（答案 D）</h2>
+  <p>点击每个选项，看看它为什么符合 / 不符合：</p>
+  <button class="opt">A. x² + 1/x² = 1<span class="why">✗ 分母里含有未知数，是<b>分式方程</b>，不是整式方程。</span></button>
+  <button class="opt">B. (x−1)(x−2) = x²+1<span class="why">✗ 展开整理：x²−3x+2 = x²+1 → −3x+1 = 0，是<b>一元一次方程</b>。</span></button>
+  <button class="opt">C. ax² + bx + c = 0<span class="why">✗ 没有说明 <b>a≠0</b>！若 a=0 就退化成一个一次方程。</span></button>
+  <button class="opt">D. x² − 5 = 0<span class="why">✓ 整式方程、只含一个未知数、最高次数为 2 且系数不为 0。三要素全满足！故选 D。</span></button>
+  <div class="key">判断一元二次方程的<b>三要素</b>：① 必须是整式方程；② 只含一个未知数；③ 二次项系数不为 0。缺一不可！</div>
+</section>
+
+<!-- ================= 第2题 ================= -->
+<section class="card" id="q2">
+  <h2>选择题第2题 · 黄金分割（答案 B）</h2>
+  <p>P 是 AB 的黄金分割点（AP&gt;BP），则 AP = (√5−1)/2 · AB ≈ <b>0.618 AB</b>。拖动滑块改变 AB：</p>
+  <svg id="svg2" width="440" height="150" viewBox="0 0 440 150">
+    <line id="seg2" x1="50" y1="90" x2="330" y2="90" stroke="#33415e" stroke-width="3"/>
+    <circle cx="50" cy="90" r="4" fill="#33415e"/><text x="42" y="112" font-size="14">A</text>
+    <circle id="cP2" cx="223" cy="90" r="6" fill="#d6453d"/>
+    <text id="tP2" x="215" y="70" font-size="13" fill="#d6453d">P</text>
+    <circle id="cB2" cx="330" cy="90" r="4" fill="#33415e"/><text id="tB2" x="324" y="112" font-size="14">B</text>
+    <text id="tRatio2" x="220" y="135" text-anchor="middle" font-size="12" fill="#667">AP : BP = 黄金比</text>
+  </svg>
+  <div class="ctrl"><label>AB 的长度：<span id="vAB2">2.0</span></label><input type="range" id="sl2" min="10" max="100" value="20"></div>
+  <div class="readout" id="out2"></div>
+  <div class="key">AB = 2 时：AP = (√5−1)/2 × 2 = <span class="ans">√5 − 1</span>，故选 B。黄金比 ≈ 0.618，记住"较长段 = 0.618 × 全长"。</div>
+</section>
+
+<!-- ================= 第3题 ================= -->
+<section class="card" id="q3">
+  <h2>选择题第3题 · 平行线分线段成比例（答案 D）</h2>
+  <p>竖格线平行且等距 → 同一直线上的 A、B、C 满足 <b>AB:BC = 格数之比</b>。从图上看：A→B 跨 2 格，B→C 跨 6 格。</p>
+  <svg id="svg3" width="440" height="220" viewBox="0 0 440 220">
+    <line x1="60" y1="15" x2="60" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="95" y1="15" x2="95" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="130" y1="15" x2="130" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="165" y1="15" x2="165" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="200" y1="15" x2="200" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="235" y1="15" x2="235" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="270" y1="15" x2="270" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="305" y1="15" x2="305" y2="195" stroke="#ccd4ee" stroke-width="1.5"/><line x1="340" y1="15" x2="340" y2="195" stroke="#ccd4ee" stroke-width="1.5"/>
+    <line id="aux3" x1="60" y1="40" x2="340" y2="40" stroke="#f7b84a" stroke-width="1.6" stroke-dasharray="6 4"/>
+    <circle cx="340" cy="40" r="3.5" fill="#f7b84a"/><text x="346" y="44" font-size="13" fill="#f7b84a">H</text>
+    <line x1="60" y1="40" x2="340" y2="200" stroke="#4a6cf7" stroke-width="2.5"/>
+    <circle cx="60" cy="40" r="5" fill="#4a6cf7"/><text x="46" y="36" font-size="14" fill="#4a6cf7">A</text>
+    <circle cx="130" cy="80" r="5" fill="#4a6cf7"/><text x="136" y="76" font-size="14" fill="#4a6cf7">B</text>
+    <circle cx="340" cy="200" r="5" fill="#4a6cf7"/><text x="348" y="204" font-size="14" fill="#4a6cf7">C</text>
+    <text x="85" y="62" font-size="12" fill="#d6453d">2 格</text>
+    <text x="220" y="150" font-size="12" fill="#d6453d">6 格</text>
+  </svg>
+  <div class="ctrl">
+    <button class="btn ghost" id="tg3">显示/隐藏辅助线 AH</button>
+    <label>AB 长度：<span id="vAB3">3.6</span> cm</label><input type="range" id="sl3" min="10" max="60" value="36">
+  </div>
+  <div class="readout" id="out3"></div>
+  <div class="key"><b>两种解法：</b>① 数格子：AB:BC = 2:6 = 1:3 → BC = 3×3.6 = <span class="ans">10.8</span>。② 作 AH⊥CH：△ABD∽△... 由 BD∥CH 得 AB:BC = AD:DH。故选 D。</div>
+</section>
+
+<!-- ================= 第5题 ================= -->
+<section class="card" id="q5">
+  <h2>选择题第5题 · 韦达定理（答案 D = 8）</h2>
+  <p>x₁, x₂ 是 x²−2x−3=0 的两根，求 x₁+x₂−2x₁x₂。</p>
+  <div class="steps"><button class="btn" id="pr5">上一步</button><button class="btn" id="nx5">下一步</button><span id="no5" style="font-size:13px;color:#888"></span></div>
+  <div class="steptext" id="out5"></div>
+  <div class="key">韦达定理：对 x²+px+q=0 的两根，<b>x₁+x₂ = −p，x₁x₂ = q</b>。这里 p=−2，q=−3。也可以分解 (x−3)(x+1)=0 检验：根为 3 和 −1。</div>
+</section>
+
+<!-- ================= 第6题 ================= -->
+<section class="card" id="q6">
+  <h2>选择题第6题 · 双循环赛（答案 C = 8 支）</h2>
+  <p>双循环 = 每两队之间赛 <b>2</b> 场。拖动滑块改变球队数 n，看总场次：</p>
+  <div class="ctrl"><label>参赛球队 n：<span id="vn6">8</span> 支</label><input type="range" id="sl6" min="2" max="12" value="8"></div>
+  <div class="readout" id="out6"></div>
+  <div class="key">n 支队，每队要和其余 (n−1) 队各赛 2 场 → 总场次 = <b>n(n−1)</b>（别忘记除以 2 的讨论：这里"每两队两场"已经算清了，不除）。令 n(n−1)=56 → n²−n−56=0 → (n−8)(n+7)=0 → <span class="ans">n=8</span>。对比：单循环是 n(n−1)/2。</div>
+</section>
+
+<!-- ================= 第9题 ================= -->
+<section class="card" id="q9">
+  <h2>填空题第9题 · 比例求值（答案 8/3）</h2>
+  <p>已知 a/5 = b/3，求 (a+b)/b。拖动滑块改变 b，看看比值变不变：</p>
+  <svg id="svg9" width="440" height="150" viewBox="0 0 440 150">
+    <rect id="barA" x="40" y="35" width="100" height="26" rx="6" fill="#4a6cf7" opacity=".8"/>
+    <text id="tBarA" x="44" y="53" font-size="12" fill="#fff">a</text>
+    <rect id="barB" x="40" y="80" width="60" height="26" rx="6" fill="#2fae7d" opacity=".85"/>
+    <text id="tBarB" x="44" y="98" font-size="12" fill="#fff">b</text>
+    <rect id="barB2" x="40" y="80" width="0" height="26" rx="0" fill="none" stroke="none"/>
+    <text x="40" y="135" font-size="12" fill="#667">蓝条 = a，绿条 = b；拖动滑块观察 (a+b) : b</text>
+  </svg>
+  <div class="ctrl"><label>b = <span id="vb9">3</span>（则 a = 5b/3）</label><input type="range" id="sl9" min="1" max="9" value="3"></div>
+  <div class="readout" id="out9"></div>
+  <div class="key"><b>合比性质</b>：a/b = 5/3 → (a+b)/b = a/b + 1 = 5/3 + 1 = <span class="ans">8/3</span>。无论 b 取多少，比值不变！</div>
+</section>
+
+<!-- ================= 第10题 ================= -->
+<section class="card" id="q10">
+  <h2>填空题第10题 · 坐标系中的正方形（答案 C(1, −3)）</h2>
+  <p>正方形 ABCD 中 A(0,4)，B(−3,0)，求 C 点坐标。核心：构造全等三角形。</p>
+  <svg id="svg10" width="440" height="420" viewBox="0 0 440 420">
+    <line x1="0" y1="15" x2="0" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="44" y1="15" x2="44" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="88" y1="15" x2="88" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="132" y1="15" x2="132" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="176" y1="15" x2="176" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="220" y1="15" x2="220" y2="405" stroke="#9aa6cc" stroke-width="1.6"/><line x1="264" y1="15" x2="264" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="308" y1="15" x2="308" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="352" y1="15" x2="352" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="396" y1="15" x2="396" y2="405" stroke="#e3e8f8" stroke-width="1"/><line x1="440" y1="15" x2="440" y2="405" stroke="#e3e8f8" stroke-width="1"/>
+    <line x1="15" y1="420" x2="425" y2="420" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="378" x2="425" y2="378" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="336" x2="425" y2="336" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="294" x2="425" y2="294" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="252" x2="425" y2="252" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="210" x2="425" y2="210" stroke="#9aa6cc" stroke-width="1.6"/><line x1="15" y1="168" x2="425" y2="168" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="126" x2="425" y2="126" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="84" x2="425" y2="84" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="42" x2="425" y2="42" stroke="#e3e8f8" stroke-width="1"/><line x1="15" y1="0" x2="425" y2="0" stroke="#e3e8f8" stroke-width="1"/>
+    <polygon points="220,42 88,210 264,336 396,168" fill="rgba(122,74,247,.1)" stroke="#7a4af7" stroke-width="2.5"/>
+    <polygon id="triABO" points="220,42 88,210 220,210" fill="rgba(74,108,247,.25)" stroke="#4a6cf7" stroke-width="2"/>
+    <polygon id="triBCE" points="88,210 264,336 264,210" fill="rgba(47,174,125,.25)" stroke="#2fae7d" stroke-width="2"/>
+    <line x1="264" y1="210" x2="264" y2="336" stroke="#2fae7d" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <circle cx="220" cy="42" r="4" fill="#33415e"/><text x="226" y="40" font-size="14">A(0,4)</text>
+    <circle cx="88" cy="210" r="4" fill="#33415e"/><text x="60" y="228" font-size="14">B(−3,0)</text>
+    <circle cx="264" cy="336" r="4.5" fill="#d6453d"/><text x="270" y="352" font-size="14" fill="#d6453d">C(1,−3)</text>
+    <circle cx="396" cy="168" r="4" fill="#33415e"/><text x="402" y="166" font-size="14">D</text>
+    <text x="226" y="226" font-size="12" fill="#667">O</text>
+    <text x="270" y="226" font-size="12" fill="#2fae7d">E</text>
+  </svg>
+  <div class="steps"><button class="btn" id="pr10">上一步</button><button class="btn" id="nx10">下一步</button><span id="no10" style="font-size:13px;color:#888"></span></div>
+  <div class="steptext" id="out10"></div>
+</section>
+
+<!-- ================= 第14题 ================= -->
+<section class="card" id="q14">
+  <h2>解答题第14题 · 解一元二次方程</h2>
+  <h3>(1) 2x² − 2x − 1 = 0 —— 公式法</h3>
+  <div class="steps"><button class="btn ghost" id="pr14a">上一步</button><button class="btn ghost" id="nx14a">下一步</button></div>
+  <div class="steptext" id="out14a"></div>
+  <h3>(2) (x−2)² = 3x − 6 —— 因式分解法（先别急着展开！）</h3>
+  <div class="steps"><button class="btn ghost" id="pr14b">上一步</button><button class="btn ghost" id="nx14b">下一步</button></div>
+  <div class="steptext" id="out14b"></div>
+  <div class="key">方法选择口诀：<b>右边能提公因式就提（2）</b>；提不了就用公式法（1）。判别式 Δ=b²−4ac 决定根的个数。</div>
+</section>
+
+<!-- ================= 第15题 ================= -->
+<section class="card" id="q15">
+  <h2>解答题第15题 · 位似变换</h2>
+  <p>(1) 位似中心 P = <b>(0, 2)</b>（对应点连线的交点）；(2) 以 O 为心、y 轴左侧、相似比 2:1 作图；(3) 面积 = <b>1</b>。</p>
+  <svg id="svg15" width="660" height="420" viewBox="0 0 660 420">
+    <line x1="21.3" y1="22.2" x2="21.3" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="64.0" y1="22.2" x2="64.0" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="106.7" y1="22.2" x2="106.7" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="149.3" y1="22.2" x2="149.3" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="192.0" y1="22.2" x2="192.0" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="234.7" y1="22.2" x2="234.7" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="277.3" y1="22.2" x2="277.3" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="320.0" y1="22.2" x2="320.0" y2="377.8" stroke="#9aa6cc" stroke-width="1.6"/><line x1="362.7" y1="22.2" x2="362.7" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="405.3" y1="22.2" x2="405.3" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="448.0" y1="22.2" x2="448.0" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="490.7" y1="22.2" x2="490.7" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="533.3" y1="22.2" x2="533.3" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="576.0" y1="22.2" x2="576.0" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="618.7" y1="22.2" x2="618.7" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="377.8" x2="618.7" y2="377.8" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="333.3" x2="618.7" y2="333.3" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="288.9" x2="618.7" y2="288.9" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="244.4" x2="618.7" y2="244.4" stroke="#9aa6cc" stroke-width="1.6"/><line x1="21.3" y1="200.0" x2="618.7" y2="200.0" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="155.6" x2="618.7" y2="155.6" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="111.1" x2="618.7" y2="111.1" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="66.7" x2="618.7" y2="66.7" stroke="#e3e8f8" stroke-width="1"/><line x1="21.3" y1="22.2" x2="618.7" y2="22.2" stroke="#e3e8f8" stroke-width="1"/>
+    <line x1="405.3" y1="200.0" x2="149.3" y2="66.7" stroke="#9ab" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <line x1="448.0" y1="66.7" x2="64.0" y2="333.3" stroke="#9ab" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <line x1="405.3" y1="111.1" x2="149.3" y2="244.4" stroke="#9ab" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <polygon points="405.3,200.0 448.0,66.7 405.3,111.1" fill="rgba(74,108,247,.2)" stroke-width="2" stroke="#4a6cf7"/>
+    <polygon points="149.3,66.7 64.0,333.3 149.3,244.4" fill="rgba(47,174,125,.2)" stroke-width="2" stroke="#2fae7d"/>
+    <polygon id="triA2" points="" fill="rgba(247,184,74,.3)" stroke="#f7b84a" stroke-width="2.5"/>
+    <circle cx="320.0" cy="155.6" r="5" fill="#d6453d"/>
+    <text x="328.0" y="149.6" font-size="13" fill="#d6453d">P(0,2)</text>
+    <text x="411.3" y="200.0" font-size="13" fill="#4a6cf7">A(2,1)</text>
+    <text x="454.0" y="66.7" font-size="13" fill="#4a6cf7">B(3,4)</text>
+    <text x="411.3" y="115.1" font-size="13" fill="#4a6cf7">C(2,3)</text>
+    <text x="149.3" y="58.7" font-size="13" fill="#2fae7d">A₁(−4,4)</text>
+    <text x="60.0" y="349.3" font-size="13" fill="#2fae7d">B₁(−6,−2)</text>
+    <text x="119.30000000000001" y="262.4" font-size="13" fill="#2fae7d">C₁(−4,0)</text>
+    <text id="tA2" font-size="13" fill="#c07f1a"></text><text id="tB2x" font-size="13" fill="#c07f1a"></text><text id="tC2x" font-size="13" fill="#c07f1a"></text>
+  </svg>
+  <div class="ctrl"><label>拖动 k（新图形 = 原图 ×k，题目 k = 1/2）：</label><input type="range" id="sl15" min="10" max="20" value="10"></div>
+  <div class="readout" id="out15"></div>
+  <div class="key">作图要点：位似中心 O(0,0)，左侧，相似比 2:1 → 各顶点坐标<b>除以 2</b>：A₂(−2,2)，B₂(−3,−1)，C₂(−2,0)。<br>面积：A₁C₁=4 为底，B₁ 到直线 A₁C₁ 的距离为 2 → S₁ = ½×4×2 = 4；相似比 1:2 → 面积比 1:4 → <b>S₂ = 1</b>。</div>
+</section>
+
+<!-- ================= 第16题 ================= -->
+<section class="card" id="q16">
+  <h2>解答题第16题 · 三角形内接正方形（答案 24cm）</h2>
+  <p>正方形 DEFG 一边在 BC 上，D、G 分别在 AB、AC 上。拖动滑块改变三角形的底和高：</p>
+  <svg id="svg16" width="480" height="330" viewBox="0 0 480 330">
+    <polygon id="tri16" points="" fill="rgba(74,108,247,.12)" stroke="#33415e" stroke-width="2.5"/>
+    <line id="ah16" x1="0" y1="0" x2="0" y2="0" stroke="#f7b84a" stroke-width="1.8" stroke-dasharray="6 4"/>
+    <rect id="sq16" x="0" y="0" width="0" height="0" fill="rgba(214,69,61,.18)" stroke="#d6453d" stroke-width="2.5"/>
+    <line id="dg16" x1="0" y1="0" x2="0" y2="0" stroke="#d6453d" stroke-width="2.5"/>
+    <text id="tA16" font-size="14"></text><text x="20" y="322" font-size="13" fill="#33415e">B</text><text id="tC16" font-size="13" fill="#33415e"></text>
+    <text id="tx16" font-size="14" fill="#d6453d" font-weight="bold"></text>
+  </svg>
+  <div class="ctrl">
+    <label>底边 BC：<span id="vBC16">60</span> cm</label><input type="range" id="slBC" min="30" max="90" value="60">
+    <label>高 AH：<span id="vAH16">40</span> cm</label><input type="range" id="slAH" min="20" max="60" value="40">
+  </div>
+  <div class="readout" id="out16"></div>
+  <div class="key">设正方形边长为 x。DG∥BC → △ADG∽△ABC，对应高之比 = 相似比：<b>(40−x)/40 = x/60</b>，解得 x=24。<br>巧记公式：x = BC·AH ÷ (BC+AH) = 60×40÷100 = <span class="ans">24 cm</span>（调和关系，拖滑块验证）。</div>
+</section>
+
+<!-- ================= 第17题 ================= -->
+<section class="card" id="q17">
+  <h2>解答题第17题 · 降价促销问题</h2>
+  <h3>(1) 两次下调相同百分率 → 32.4 元</h3>
+  <div class="ctrl"><label>每次降价百分率：<span id="vr17">10</span>%</label><input type="range" id="slR17" min="0" max="25" value="10"></div>
+  <div class="readout" id="out17a"></div>
+  <h3>(2) 每降 1 元多卖 8 件，要利润 504 元</h3>
+  <div class="ctrl"><label>每件降价：<span id="vy17">3</span> 元</label><input type="range" id="slY17" min="0" max="8" value="3"></div>
+  <div class="readout" id="out17b"></div>
+  <button class="btn ghost" id="tg17">为什么选 y=3 而不是 y=1？</button>
+  <div class="steptext" id="st17" style="display:none">(40−30−y)(48+8y)=504 → y²−4y+3=0 → y₁=1，y₂=3。<b>两个解都能赚 504 元</b>！但题目要求"尽快减少库存"——降得多卖得多（3 元时多卖 24 件），所以取 <span class="ans">y=3</span>。这是中考常考的"双根取舍"陷阱！</div>
+  <div class="key">(1) 40(1−x)² = 32.4 → (1−x)² = 0.81 → x = 0.1 = <span class="ans">10%</span>（x=1.9 舍去）。</div>
+</section>
+
+<!-- ================= 第18题 ================= -->
+<section class="card" id="q18">
+  <h2>解答题第18题 · "对称方程"新定义</h2>
+  <p><b>定义：</b>两方程满足 ① 二次项系数互为相反数（a₁+a₂=0）；② 一次项系数相等（b₁=b₂）；③ 常数项互为相反数（c₁+c₂=0）→ 互为对称方程。</p>
+  <h3>(1) 试一试：输入系数，自动生成对称方程</h3>
+  <div class="ctrl">
+    <label>a₁=<input type="number" id="ina" value="2" style="width:56px"></label>
+    <label>b₁=<input type="number" id="inb" value="-3" style="width:56px"></label>
+    <label>c₁=<input type="number" id="inc" value="1" style="width:56px"></label>
+  </div>
+  <div class="readout" id="out18a"></div>
+  <h3>(2) 8x²+(m−3)x−n=0 与 8x²... = 1 的对称方程</h3>
+  <div class="steps"><button class="btn ghost" id="pr18">上一步</button><button class="btn ghost" id="nx18">下一步</button></div>
+  <div class="steptext" id="out18b"></div>
+</section>
+
+<!-- ================= 第19题 ================= -->
+<section class="card" id="q19">
+  <h2>解答题第19题 · 菱形 + 矩形证明（答案 AE = 2√13）</h2>
+  <p>菱形 ABCD 对角线交于 O。作 DE∥AC 且 DE = ½AC（E 在 D 左侧），连接 AE、CE。</p>
+  <svg id="svg19" width="460" height="320" viewBox="0 0 460 320">
+    <polygon points="320,90 270,250 90,250 140,90" fill="rgba(74,108,247,.1)" stroke="#33415e" stroke-width="2.5"/>
+    <polygon id="rectOCED" points="205,170 90,250 25,170 140,90" fill="rgba(247,184,74,.22)" stroke="#f7b84a" stroke-width="2.5"/>
+    <line x1="320" y1="90" x2="90" y2="250" stroke="#33415e" stroke-width="1.8"/>
+    <line x1="140" y1="90" x2="270" y2="250" stroke="#33415e" stroke-width="1.8"/>
+    <line x1="25" y1="170" x2="140" y2="90" stroke="#2fae7d" stroke-width="2.5"/>
+    <line x1="25" y1="170" x2="90" y2="250" stroke="#2fae7d" stroke-width="2.5"/>
+    <line x1="25" y1="170" x2="320" y2="90" stroke="#d6453d" stroke-width="2"/>
+    <circle cx="205" cy="170" r="4.5" fill="#d6453d"/><text x="212" y="166" font-size="13" fill="#d6453d">O</text>
+    <circle cx="25" cy="170" r="4.5" fill="#2fae7d"/><text x="6" y="162" font-size="14" fill="#2fae7d">E</text>
+    <text x="326" y="84" font-size="14">A</text><text x="132" y="82" font-size="14">D</text>
+    <text x="276" y="266" font-size="14">B</text><text x="76" y="266" font-size="14">C</text>
+    <text x="120" y="150" font-size="11" fill="#b0792a">矩形 OCED</text>
+  </svg>
+  <div class="steps"><button class="btn" id="pr19">上一步</button><button class="btn" id="nx19">下一步</button><span id="no19" style="font-size:13px;color:#888"></span></div>
+  <div class="steptext" id="out19"></div>
+</section>
+
+<!-- ================= 第4题 反例 ================= -->
+<section class="card" id="q4">
+  <h2>选择题第4题 · A、B、C 三个选项的反例图</h2>
+  <p>题目：下列说法正确的是（ ）—— 正确答案是 <span class="ans">D（对角线互相垂直平分的四边形是菱形）</span>。下面用图说明 A、B、C 为什么错。</p>
+
+  <h3>反例 A：四条边相等的四边形不一定是正方形</h3>
+  <svg width="320" height="190" viewBox="0 0 320 190">
+    <polygon points="160,20 250,95 160,170 70,95" fill="#e8edff" stroke="#4a6cf7" stroke-width="2"/>
+    <text x="160" y="12" text-anchor="middle" font-size="12">四条边都相等（都是 a）</text>
+    <text x="228" y="52" font-size="12" fill="#d6453d">a</text>
+    <text x="228" y="148" font-size="12" fill="#d6453d">a</text>
+    <text x="88" y="148" font-size="12" fill="#d6453d">a</text>
+    <text x="88" y="52" font-size="12" fill="#d6453d">a</text>
+    <text x="160" y="100" text-anchor="middle" font-size="12">角不是 90°</text>
+    <text x="160" y="188" text-anchor="middle" font-size="12" fill="#d6453d">这是菱形，不是正方形！</text>
+  </svg>
+  <div class="tip">四条边相等 → 只能得到<b>菱形</b>。再加上"有一个角是直角"或"对角线相等"才是正方形。</div>
+
+  <h3>反例 B：对角线相等的四边形不一定是矩形</h3>
+  <svg width="320" height="200" viewBox="0 0 320 200">
+    <polygon points="90,30 230,30 290,160 30,160" fill="#e8edff" stroke="#4a6cf7" stroke-width="2"/>
+    <line x1="90" y1="30" x2="290" y2="160" stroke="#d6453d" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <line x1="230" y1="30" x2="30" y2="160" stroke="#d6453d" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="200" y="105" font-size="12" fill="#d6453d">对角线1</text>
+    <text x="95" y="105" font-size="12" fill="#d6453d">对角线2</text>
+    <text x="160" y="22" text-anchor="middle" font-size="12">等腰梯形：两条对角线相等</text>
+    <text x="160" y="182" text-anchor="middle" font-size="12" fill="#d6453d">对角线相等 ≠ 矩形（必须是"平行四边形"+对角线相等）</text>
+  </svg>
+  <div class="tip">正确结论：<b>对角线相等的平行四边形</b>才是矩形。少了"平行四边形"这个前提，等腰梯形就是反例。</div>
+
+  <h3>反例 C：有一组对边相等的平行四边形不一定是菱形</h3>
+  <svg width="340" height="190" viewBox="0 0 340 190">
+    <polygon points="70,50 230,50 280,140 120,140" fill="#e8edff" stroke="#4a6cf7" stroke-width="2"/>
+    <text x="150" y="42" text-anchor="middle" font-size="12">上底 = 下底（一组对边相等）</text>
+    <text x="62" y="100" font-size="12" fill="#888">斜边</text>
+    <text x="288" y="100" font-size="12" fill="#888">斜边</text>
+    <text x="160" y="165" text-anchor="middle" font-size="12" fill="#d6453d">邻边不相等 → 只是普通平行四边形，不是菱形！</text>
+  </svg>
+  <div class="tip">平行四边形的<b>对边本来就相等</b>，所以"一组对边相等"是废话，满足条件的普通平行四边形遍地都是。要判菱形需"<b>一组邻边</b>相等"或"对角线互相垂直"。</div>
+</section>
+
+<!-- ================= 第7题 ================= -->
+<section class="card" id="q7">
+  <h2>选择题第7题 · 矩形法求 MN 的最小值</h2>
+  <p><b>题意：</b>Rt△ABC 中，∠A=90°，AB=3，AC=4，D 是斜边 BC 上的动点，DM⊥AB，DN⊥AC。求 MN 的最小值。</p>
+  <svg id="svg7" width="420" height="320" viewBox="0 0 420 320">
+    <polygon points="115,89 40,260 360,260" fill="#eef3ff" stroke="#33415e" stroke-width="2"/>
+    <rect x="105" y="79" width="20" height="20" fill="none" stroke="#33415e" transform="rotate(0)" opacity="0"/>
+    <path d="M 115 89 l 14 0 l 0 14" fill="none" stroke="#33415e" stroke-width="1.5"/>
+    <text x="105" y="80" font-size="14" fill="#33415e">A</text>
+    <text x="26" y="278" font-size="14" fill="#33415e">B</text>
+    <text x="362" y="278" font-size="14" fill="#33415e">C</text>
+    <text x="270" y="252" font-size="12" fill="#33415e">BC=5</text>
+    <line id="lAM" x1="115" y1="89" x2="115" y2="89" stroke="#4a6cf7" stroke-width="2"/>
+    <line id="lAN" x1="115" y1="89" x2="115" y2="89" stroke="#4a6cf7" stroke-width="2"/>
+    <line id="lDM" x1="115" y1="89" x2="115" y2="89" stroke="#7a4af7" stroke-width="2" stroke-dasharray="6 4"/>
+    <line id="lDN" x1="115" y1="89" x2="115" y2="89" stroke="#7a4af7" stroke-width="2" stroke-dasharray="6 4"/>
+    <line id="lMN" x1="115" y1="89" x2="115" y2="89" stroke="#ff5a3c" stroke-width="3"/>
+    <line id="lAD" x1="115" y1="89" x2="115" y2="89" stroke="#2fae7d" stroke-width="2"/>
+    <line id="alt7" x1="115" y1="89" x2="115" y2="260" stroke="#f7b84a" stroke-width="2" stroke-dasharray="4 4" opacity="0"/>
+    <circle id="cD" cx="115" cy="260" r="6" fill="#4a6cf7"/>
+    <circle cx="115" cy="89" r="3.5" fill="#33415e"/>
+    <circle cx="40" cy="260" r="3.5" fill="#33415e"/>
+    <circle cx="360" cy="260" r="3.5" fill="#33415e"/>
+    <text id="tD" x="125" y="278" font-size="13" fill="#4a6cf7">D</text>
+    <text id="tM" x="115" y="89" font-size="12" fill="#33415e">M</text>
+    <text id="tN" x="115" y="89" font-size="12" fill="#33415e">N</text>
+  </svg>
+  <div class="ctrl">
+    <label>拖动 D 在 BC 上移动：</label>
+    <input type="range" id="sl7" min="0" max="100" value="20">
+    <button class="btn ghost" id="btnMin7">跳到最小值位置</button>
+  </div>
+  <div class="readout" id="out7"></div>
+  <div class="key"><b>发现规律：</b>∠DMA=∠DNA=∠A=90° → 四边形 DMAN 有三个直角，是<b>矩形</b> → <b>MN = AD</b>！所以求 MN 最小值就变成求"点 A 到直线 BC 的最短距离"——垂线段最短。</div>
+  <p><b>计算：</b>S<sub>△ABC</sub> = ½·AB·AC = ½·BC·AD<sub>min</sub> → AD<sub>min</sub> = (3×4)/5 = <span class="ans">12/5</span>。故选 A。</p>
+</section>
+
+<!-- ================= 第8题 ================= -->
+<section class="card" id="q8">
+  <h2>选择题第8题 · 两次相似求 DG/CG</h2>
+  <p><b>题意：</b>▱ABCD 中，E 是 BC 中点，BG 交 AE 于 F、交 CD 于 G。已知 AF:FE = 3:1，求 DG:CG。</p>
+  <svg id="svg8" width="460" height="300" viewBox="0 0 460 300">
+    <polygon points="120,70 300,70 240,230 60,230" fill="#eef3ff" stroke="#33415e" stroke-width="2"/>
+    <text x="112" y="62" font-size="14">A</text>
+    <text x="306" y="62" font-size="14">D</text>
+    <text x="46" y="248" font-size="14">B</text>
+    <text x="240" y="248" font-size="14">C</text>
+    <text x="140" y="248" font-size="13" fill="#888">E（BC中点）</text>
+    <line x1="150" y1="230" x2="150" y2="230" stroke="none"/>
+    <line id="lAE" x1="120" y1="70" x2="150" y2="230" stroke="#2fae7d" stroke-width="2"/>
+    <line id="lBF" x1="60" y1="230" x2="142.5" y2="200" stroke="#d6453d" stroke-width="2"/>
+    <line id="lFG" x1="142.5" y1="200" x2="280" y2="133.3" stroke="#d6453d" stroke-width="2"/>
+    <line id="lGH" x1="280" y1="133.3" x2="390" y2="70" stroke="#d6453d" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <line x1="300" y1="70" x2="390" y2="70" stroke="#f7b84a" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="394" y="74" font-size="13" fill="#f7b84a">H</text>
+    <circle id="cF8" cx="142.5" cy="200" r="5.5" fill="#fff" stroke="#d6453d" stroke-width="2"/>
+    <text x="130" y="192" font-size="13" fill="#d6453d">F</text>
+    <circle cx="280" cy="133.3" r="5" fill="#fff" stroke="#d6453d" stroke-width="2"/>
+    <text x="270" y="122" font-size="13" fill="#d6453d">G</text>
+    <circle cx="150" cy="230" r="4" fill="#33415e"/>
+    <circle cx="120" cy="70" r="3.5" fill="#33415e"/><circle cx="300" cy="70" r="3.5" fill="#33415e"/>
+    <circle cx="60" cy="230" r="3.5" fill="#33415e"/><circle cx="240" cy="230" r="3.5" fill="#33415e"/>
+  </svg>
+  <div class="ctrl">
+    <label>拖动改变 AF:FE（题目给的是 3）：</label>
+    <input type="range" id="sl8" min="10" max="60" value="30">
+  </div>
+  <div class="readout" id="out8"></div>
+  <div class="key"><b>思路（两次相似）：</b>① 延长 AD 交 BG 延长线于 H，由 AH∥BE 得 △AHF∽△EBF，AH = 3BE；又 AD = BC = 2BE，所以 <b>DH = BE</b>。② 由 DH∥CB 得 △DGH∽△CGB，故 DG/CG = DH/BC = BE/(2BE) = <span class="ans">1/2</span>。故选 A。</div>
+</section>
+
+<!-- ================= 第11题 ================= -->
+<section class="card" id="q11">
+  <h2>填空题第11题 · 小孔成像中的相似三角形</h2>
+  <p><b>题意：</b>AB⊥BC，CD⊥BC（AB 是物体高 15cm，CD 是像高 5cm，像倒立），光线过 A-O-C、B-O-D。求小孔 O 到 BC 的距离 OE。</p>
+  <svg id="svg11" width="440" height="300" viewBox="0 0 440 300">
+    <line x1="40" y1="60" x2="40" y2="240" stroke="#33415e" stroke-width="2.5"/>
+    <line x1="360" y1="180" x2="360" y2="240" stroke="#33415e" stroke-width="2.5"/>
+    <line x1="20" y1="240" x2="400" y2="240" stroke="#33415e" stroke-width="1.5"/>
+    <line x1="40" y1="60" x2="280" y2="195" stroke="#f7b84a" stroke-width="1.8" stroke-dasharray="7 5"/>
+    <line x1="280" y1="195" x2="360" y2="240" stroke="#f7b84a" stroke-width="1.8" stroke-dasharray="7 5"/>
+    <line x1="40" y1="240" x2="280" y2="195" stroke="#7a4af7" stroke-width="1.8" stroke-dasharray="7 5"/>
+    <line x1="280" y1="195" x2="360" y2="180" stroke="#7a4af7" stroke-width="1.8" stroke-dasharray="7 5"/>
+    <text x="28" y="52" font-size="13">A</text>
+    <text x="30" y="256" font-size="13">B</text>
+    <text x="366" y="176" font-size="13">D</text>
+    <text x="366" y="256" font-size="13">C</text>
+    <text x="48" y="150" font-size="12">物体 AB=<tspan id="tAB">15</tspan>cm</text>
+    <text x="290" y="215" font-size="12">像 CD=<tspan id="tCD">5</tspan>cm</text>
+    <circle id="cO11" cx="280" cy="195" r="6" fill="#fff" stroke="#d6453d" stroke-width="2.5"/>
+    <text x="290" y="190" font-size="13" fill="#d6453d">O（小孔）</text>
+    <line id="lOE11" x1="200" y1="240" x2="200" y2="0" stroke="#2fae7d" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text id="tE11" x="206" y="256" font-size="13" fill="#2fae7d">E</text>
+    <text id="tOE11" x="206" y="120" font-size="13" fill="#2fae7d">OE=?</text>
+  </svg>
+  <div class="ctrl">
+    <label>物体高 AB：<span id="vAB">15</span> cm</label><input type="range" id="slAB" min="6" max="24" value="15">
+    <label>像高 CD：<span id="vCD">5</span> cm</label><input type="range" id="slCD" min="2" max="12" value="5">
+    <label>移动 E 的位置：</label><input type="range" id="slE11" min="110" max="330" value="200">
+  </div>
+  <div class="readout" id="out11"></div>
+  <div class="key"><b>关键一步：</b>OE∥AB → △COE∽△CAB，得 OE/AB = CE/CB ①；OE∥CD → △BOE∽△BDC，得 OE/CD = BE/BC ②。<br>①+② 右边 = (CE+BE)/CB = 1，所以 <b>OE/15 + OE/5 = 1</b> → OE = <span class="ans">15/4 cm</span>。注意：无论怎么移动 E，这个和都等于 1，OE 不变！</div>
+</section>
+
+<!-- ================= 第12题 ================= -->
+<section class="card" id="q12">
+  <h2>填空题第12题 · 装裱问题列方程</h2>
+  <p><b>题意：</b>原作品长 60cm、宽 24cm。左右边宽相等（设为 x），天头长与地头长相等，<b>右边宽 : 天头长 = 1 : 5</b>，装裱后总面积 2240cm²。列方程。</p>
+  <svg id="svg12" width="300" height="420" viewBox="0 0 300 420">
+    <rect id="outer12" x="30" y="30" width="240" height="360" fill="#fdf3e3" stroke="#d6453d" stroke-width="2"/>
+    <rect id="inner12" x="90" y="120" width="120" height="180" fill="#fff" stroke="#4a6cf7" stroke-width="2"/>
+    <text x="150" y="80" text-anchor="middle" font-size="12" fill="#b0792a">天头长 = 5x</text>
+    <text x="150" y="360" text-anchor="middle" font-size="12" fill="#b0792a">地头长 = 5x</text>
+    <text x="60" y="215" text-anchor="middle" font-size="12" fill="#b0792a" transform="rotate(-90 60 215)">左边宽 x</text>
+    <text x="240" y="215" text-anchor="middle" font-size="12" fill="#b0792a" transform="rotate(90 240 215)">右边宽 x</text>
+    <text x="150" y="212" text-anchor="middle" font-size="15">书法作品</text>
+    <text x="150" y="232" text-anchor="middle" font-size="11">60 × 24</text>
+  </svg>
+  <div class="ctrl">
+    <label>拖动 x（右边宽，单位 cm）：<span id="vx12">2.0</span></label>
+    <input type="range" id="sl12" min="0" max="50" value="20">
+    <button class="btn" id="btnSolve12">帮我解方程</button>
+  </div>
+  <div class="readout" id="out12"></div>
+  <div id="solve12" style="display:none" class="key">
+    展开：(60+10x)(24+2x) = 2240 → 20x² + 360x + 1440 = 2240 → <b>x² + 18x − 40 = 0</b>。<br>
+    求根：x = (−18 + √(324+160))/2 = (−18+22)/2 = <span class="ans">2</span>（负根 −20 舍去）。<br>
+    检验：长 60+10×2 = 80，宽 24+2×2 = 28，80×28 = 2240 ✓
+  </div>
+  <div class="tip">列方程的关键：用 x 把<b>所有边长都表示出来</b> —— 右边宽 x → 天头长 5x → 装裱后总长 60+2·5x、总宽 24+2x → 面积相乘等于 2240。</div>
+</section>
+
+<!-- ================= 第13题 ================= -->
+<section class="card" id="q13">
+  <h2>填空题第13题 · 矩形中的线段计算（答案 8√10/5）</h2>
+  <p><b>题意：</b>矩形 ABCD 中 AB=8，AE=6（E 在 AD 上），BE 连线，BF 平分∠EBC 交 CD 于 F，AF 交 BE 于 G。当 AB=BG 时，求 GF。</p>
+  <svg id="svg13" width="860" height="330" viewBox="0 0 860 330">
+    <polygon points="60,40 348,40 348,280 60,280" fill="#eef3ff" stroke="#33415e" stroke-width="2"/>
+    <line id="lBE13" x1="60" y1="280" x2="240" y2="40" stroke="#2fae7d" stroke-width="2"/>
+    <line id="lBF13" x1="60" y1="280" x2="348" y2="136" stroke="#7a4af7" stroke-width="2"/>
+    <line id="lAF13" x1="60" y1="40" x2="780" y2="280" stroke="#d6453d" stroke-width="2"/>
+    <circle cx="540" cy="40" r="4" fill="#33415e"/><text x="548" y="34" font-size="13">M</text>
+    <circle cx="204" cy="88" r="5" fill="#fff" stroke="#d6453d" stroke-width="2.5"/>
+    <text x="190" y="78" font-size="13" fill="#d6453d">G</text>
+    <circle cx="348" cy="136" r="5" fill="#fff" stroke="#d6453d" stroke-width="2.5"/>
+    <text x="356" y="132" font-size="13" fill="#d6453d">F</text>
+    <circle cx="240" cy="40" r="4" fill="#33415e"/><text x="234" y="30" font-size="14">E</text>
+    <circle cx="60" cy="40" r="4" fill="#33415e"/><text x="44" y="34" font-size="14">A</text>
+    <circle cx="60" cy="280" r="4" fill="#33415e"/><text x="44" y="298" font-size="14">B</text>
+    <circle cx="348" cy="280" r="4" fill="#33415e"/><text x="348" y="300" font-size="14">C</text>
+    <circle cx="348" cy="40" r="4" fill="#33415e"/><text x="348" y="30" font-size="14">D</text>
+    <circle cx="780" cy="280" r="4" fill="#f7b84a"/><text x="786" y="298" font-size="13" fill="#f7b84a">N</text>
+    <text x="150" y="30" font-size="11" fill="#888">AE=6</text>
+    <text x="36" y="165" font-size="11" fill="#888">8</text>
+  </svg>
+  <div class="steps">
+    <button class="btn" id="prev13">上一步</button><button class="btn" id="next13">下一步</button>
+    <span id="stepNo13" style="font-size:13px;color:#888"></span>
+  </div>
+  <div class="steptext" id="st13">点击"下一步"开始逐步推演。图中：绿线=BE，紫线=BF（角平分线），红线=AF 延长交 BC 延长线于 N。</div>
+  <div class="key" id="ans13" style="display:none">所以 GF = AF − AG = (16√10 − 8√10)/5 = <span class="ans">8√10/5</span> ✓</div>
+</section>
+
+<!-- ================= 第20题 ================= -->
+<section class="card" id="q20">
+  <h2>第20题 · "垂对三等分平行四边形"综合与实践</h2>
+  <p><b>定义：</b>从平行四边形一个顶点向不过该顶点的对角线作垂线，垂线交边于一点，且该点是边的三等分点 → 叫"垂对三等分平行四边形"。</p>
+
+  <h3>(1) 理解应用：求 DP 与 AD</h3>
+  <svg width="380" height="250" viewBox="0 0 380 250">
+    <polygon points="70,40 330,40 260,210 0,210" fill="#eef3ff" stroke="#33415e" stroke-width="2" transform="translate(15,10)"/>
+    <line id="t20bd" x1="85" y1="50" x2="275" y2="220" stroke="#33415e" stroke-width="2"/>
+    <line id="t20ae" x1="280" y1="50" x2="150" y2="220" stroke="#d6453d" stroke-width="2"/>
+    <polygon id="tri20a" points="150,220 180,163 280,50" fill="rgba(74,108,247,.18)" stroke="none"/>
+    <polygon id="tri20b" points="150,220 180,163 85,50" fill="rgba(214,69,61,.14)" stroke="none"/>
+    <text x="278" y="42" font-size="13">D</text><text x="342" y="46" font-size="13">C</text>
+    <text x="20" y="232" font-size="13">A</text><text x="272" y="238" font-size="13">B</text>
+    <text x="196" y="150" font-size="12" fill="#d6453d">P</text>
+    <text x="150" y="238" font-size="12" fill="#2fae7d">E</text>
+    <text x="120" y="90" font-size="11" fill="#888">DE=√7</text>
+    <text x="230" y="200" font-size="11" fill="#888">BP=6</text>
+  </svg>
+  <div class="steps">
+    <button class="btn ghost" id="p1a">① 求 CD</button><button class="btn ghost" id="p1b">② 证相似</button>
+    <button class="btn ghost" id="p1c">③ 求 DP</button><button class="btn ghost" id="p1d">④ 求 AD</button>
+  </div>
+  <div class="steptext" id="st20a">已知 DE = (1/3)CD = √7，BP = 6。依次点击 ① ~ ④ 看推演。</div>
+
+  <h3>(2) 问题探究：猜想 BD 与 BC 的数量关系</h3>
+  <p>条件：DE = (1/3)CD，CE = CB。猜想：<span class="ans">BD = 2BC</span>。拖动滑块观察各线段按 a 缩放：</p>
+  <svg id="svg202" width="520" height="260" viewBox="0 0 520 260">
+    <line id="lBD20" x1="60" y1="60" x2="360" y2="220" stroke="#33415e" stroke-width="2.5"/>
+    <line id="lCE20" x1="330" y1="40" x2="240" y2="200" stroke="#2fae7d" stroke-width="2.5"/>
+    <line id="lCB20" x1="330" y1="40" x2="360" y2="220" stroke="#4a6cf7" stroke-width="2.5"/>
+    <text x="320" y="30" font-size="14">C</text>
+    <text x="366" y="238" font-size="14">B</text>
+    <text x="48" y="52" font-size="14">D</text>
+    <text x="228" y="218" font-size="13" fill="#2fae7d">P</text>
+    <text x="260" y="140" font-size="12" fill="#2fae7d">CP=3a</text>
+    <text x="330" y="240" font-size="12" fill="#4a6cf7">CB=5a</text>
+    <text x="160" y="120" font-size="12" fill="#888">DP=6a</text>
+    <text x="300" y="190" font-size="12" fill="#2fae7d">BP=4a</text>
+  </svg>
+  <div class="ctrl"><label>拖动滑块改变 a：</label><input type="range" id="sl20" min="4" max="16" value="10"></div>
+  <div class="readout" id="out20"></div>
+  <div class="key"><b>证明要点：</b>AB∥CD → △BEP∽△DCP，EP:PC = BE:CD = (1/3 AB):(2/3 AB) = <b>2:3</b>。设 EP=2a，则 CP=3a，CE=5a=CB。Rt△BCP 中 BP=√((5a)²−(3a)²)=4a；由相似 DP=3a/2·... 得 DP=6a。BD=DP+BP=10a=2·5a=<span class="ans">2BC</span>。</div>
+
+  <h3>(3) 拓展延伸：矩形中 AD 的长度（AB=6）</h3>
+  <p>矩形 ABCD 中 AE⊥BD 于 P，交 CD 于 E。<b>注意：E 是 CD 的三等分点，但没说哪一个！</b> 所以要分两种情况：</p>
+  <div class="steps">
+    <button class="btn casebtn on" id="case1">情况①：DE = (1/3)CD = 2</button>
+    <button class="btn casebtn" id="case2">情况②：DE = (2/3)CD = 4</button>
+  </div>
+  <svg width="440" height="250" viewBox="0 0 440 250">
+    <polygon points="60,40 380,40 380,210 60,210" fill="#eef3ff" stroke="#33415e" stroke-width="2"/>
+    <line x1="60" y1="210" x2="380" y2="40" stroke="#33415e" stroke-width="2"/>
+    <line id="ae20" x1="60" y1="40" x2="240" y2="90" stroke="#d6453d" stroke-width="2.5"/>
+    <circle cx="175" cy="88" r="5" fill="#fff" stroke="#d6453d" stroke-width="2.5"/>
+    <text x="160" y="80" font-size="13" fill="#d6453d">P</text>
+    <circle cx="240" cy="90" r="4" fill="#d6453d"/><text x="246" y="86" font-size="13" fill="#d6453d">E</text>
+    <text x="50" y="30" font-size="14">D</text><text x="386" y="30" font-size="14">C</text>
+    <text x="48" y="228" font-size="14">A</text><text x="386" y="228" font-size="14">B</text>
+    <text id="tDE20" x="130" y="52" font-size="12" fill="#d6453d">DE=2</text>
+  </svg>
+  <div class="steptext" id="st20c"></div>
+</section>
+
+<script>
+document.getElementById('nav').addEventListener('click', function(e){
+  if(e.target.tagName!=='BUTTON') return;
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('section.card').forEach(s=>s.classList.remove('show'));
+  document.getElementById(e.target.dataset.t).classList.add('show');
+});
+
+/* ---------- 第7题 ---------- */
+var A7={x:115,y:89}, B7={x:40,y:260}, C7={x:360,y:260};
+function proj(D,P,Q){var vx=Q.x-P.x,vy=Q.y-P.y;var t=((D.x-P.x)*vx+(D.y-P.y)*vy)/(vx*vx+vy*vy);return{x:P.x+t*vx,y:P.y+t*vy};}
+function setLine(id,x1,y1,x2,y2){var l=document.getElementById(id);l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);}
+function upd7(){
+  var t=document.getElementById('sl7').value/100;
+  var D={x:40+320*t,y:260};
+  var M=proj(D,A7,B7), N=proj(D,A7,C7);
+  setLine('lAM',A7.x,A7.y,M.x,M.y); setLine('lAN',A7.x,A7.y,N.x,N.y);
+  setLine('lDM',D.x,D.y,M.x,M.y); setLine('lDN',D.x,D.y,N.x,N.y);
+  setLine('lMN',M.x,M.y,N.x,N.y); setLine('lAD',A7.x,A7.y,D.x,D.y);
+  var c=document.getElementById('cD'); c.setAttribute('cx',D.x); c.setAttribute('cy',D.y);
+  var tM=document.getElementById('tM'); tM.setAttribute('x',M.x-18); tM.setAttribute('y',M.y+4);
+  var tN=document.getElementById('tN'); tN.setAttribute('x',N.x+8); tN.setAttribute('y',N.y+14);
+  var tD=document.getElementById('tD'); tD.setAttribute('x',D.x+8); tD.setAttribute('y',D.y+18);
+  var AD=Math.hypot(D.x-A7.x,D.y-A7.y)/64;
+  var MN=Math.hypot(N.x-M.x,N.y-M.y)/64;
+  var near=Math.abs(t-0.2344)<0.03;
+  document.getElementById('alt7').setAttribute('opacity', near?1:0);
+  document.getElementById('out7').innerHTML=
+    'AD = '+AD.toFixed(2)+'，MN = '+MN.toFixed(2)+'（始终相等：矩形对角线！）<br>'+
+    (near ? '⭐ 到达垂足位置：AD⊥BC，AD 取最小值 <b>12/5 = 2.4</b>！'
+          : '继续拖动，让 AD 垂直于 BC（黄线位置）…');
+}
+document.getElementById('sl7').addEventListener('input',upd7);
+document.getElementById('btnMin7').addEventListener('click',function(){document.getElementById('sl7').value=23;upd7();});
+upd7();
+
+/* ---------- 第8题 ---------- */
+var A8={x:120,y:70},B8={x:60,y:230},C8={x:240,y:230},D8={x:300,y:70},E8={x:150,y:230};
+function upd8(){
+  var r=document.getElementById('sl8').value/10;
+  var s=r/(1+r);
+  var F={x:A8.x+s*(E8.x-A8.x), y:A8.y+s*(E8.y-A8.y)};
+  setLine('lAE',A8.x,A8.y,E8.x,E8.y);
+  setLine('lBF',B8.x,B8.y,F.x,F.y);
+  // G = line BF ∩ line CD
+  u=180/(160*(F.x-60)/(240-F.y)-60);
+  var G={x:240+60*u, y:240-160*u};
+  setLine('lFG',F.x,F.y,G.x,G.y);
+  var vH=(240-70)/(240-F.y); var H={x:60+vH*(F.x-60), y:70};
+  setLine('lGH',G.x,G.y,H.x,H.y);
+  var cF=document.getElementById('cF8'); cF.setAttribute('cx',F.x); cF.setAttribute('cy',F.y);
+  var DG=Math.hypot(G.x-D8.x,G.y-D8.y), CG=Math.hypot(G.x-C8.x,G.y-C8.y);
+  var DH=Math.hypot(H.x-D8.x,H.y-D8.y), BC=Math.hypot(C8.x-B8.x,C8.y-B8.y);
+  document.getElementById('out8').innerHTML=
+    'AF:FE = <b>'+r.toFixed(1)+'</b>：1　→　由△AHF∽△EBF 得 AH = '+r.toFixed(1)+'·BE；又 BC = 2BE，所以 DH = AH − AD = '+(r-2).toFixed(1)+'·BE<br>'+
+    'DG = '+DG.toFixed(1)+'，CG = '+CG.toFixed(1)+'，DG/CG = <b>'+(DG/CG).toFixed(2)+'</b>'+(Math.abs(r-3)<0.01?' = <b>1/2</b> ✓（此时 DH = BE，DH/BC = 1/2）':'');
+}
+document.getElementById('sl8').addEventListener('input',upd8);
+upd8();
+
+/* ---------- 第11题 ---------- */
+function upd11(){
+  var ab=+document.getElementById('slAB').value, cd=+document.getElementById('slCD').value;
+  document.getElementById('vAB').textContent=ab; document.getElementById('vCD').textContent=cd;
+  document.getElementById('tAB').textContent=ab; document.getElementById('tCD').textContent=cd;
+  var Ax=40,Ay=240-12*ab, Dx=360,Dy=240-12*cd;
+  var t=ab/(ab+cd), Ox=40+320*t, Oy=240-12*t*ab;
+  var O=document.getElementById('cO11'); O.setAttribute('cx',Ox); O.setAttribute('cy',Oy);
+  var svg=document.getElementById('svg11');
+  svg.querySelectorAll('.dyn11').forEach(function(e){e.remove();});
+  function dyn(x1,y1,x2,y2,c,w,da){var l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);l.setAttribute('stroke',c);l.setAttribute('stroke-width',w);if(da)l.setAttribute('stroke-dasharray',da);l.classList.add('dyn11');svg.appendChild(l);}
+  dyn(Ax,Ay,Ox,Oy,'#f7b84a',1.8,'7 5'); dyn(Ox,Oy,360,240,'#f7b84a',1.8,'7 5');
+  dyn(40,240,Ox,Oy,'#7a4af7',1.8,'7 5'); dyn(Ox,Oy,Dx,Dy,'#7a4af7',1.8,'7 5');
+  dyn(Ax,Ay,Ax,240,'#33415e',2.5); dyn(Dx,Dy,Dx,240,'#33415e',2.5);
+  var ex=+document.getElementById('slE11').value;
+  var lo=document.getElementById('lOE11'); lo.setAttribute('x1',ex); lo.setAttribute('x2',ex); lo.setAttribute('y2',Oy);
+  document.getElementById('tE11').setAttribute('x',ex+6);
+  var tOE=document.getElementById('tOE11'); tOE.setAttribute('x',ex+8); tOE.setAttribute('y',(240+Oy)/2);
+  var oe=ab*cd/(ab+cd);
+  document.getElementById('out11').innerHTML=
+    'OE = AB×CD÷(AB+CD) = '+ab+'×'+cd+'÷('+(ab+cd)+') = <b>'+oe.toFixed(2)+' cm</b><br>'+
+    '验证相似：OE/'+ab+' + OE/'+cd+' = '+((oe/ab).toFixed(3))+' + '+((oe/cd).toFixed(3))+' = 1 ✓（和恒等于1，移动 E 也不会变）';
+}
+['slAB','slCD','slE11'].forEach(function(id){document.getElementById(id).addEventListener('input',upd11);});
+upd11();
+
+/* ---------- 第12题 ---------- */
+function upd12(){
+  var x=document.getElementById('sl12').value/10;
+  document.getElementById('vx12').textContent=x.toFixed(1);
+  var L=60+10*x, W=24+2*x, area=L*W;
+  var o=document.getElementById('outer12');
+  o.setAttribute('x',150-2*W); o.setAttribute('y',210-2.5*L);
+  o.setAttribute('width',4*W); o.setAttribute('height',5*L);
+  document.getElementById('out12').innerHTML=
+    '装裱后：长 = 60+2×(5x) = <b>'+L.toFixed(1)+'</b> cm，宽 = 24+2x = <b>'+W.toFixed(1)+'</b> cm<br>'+
+    '面积 = '+L.toFixed(1)+' × '+W.toFixed(1)+' = <b>'+Math.round(area)+'</b> cm² '+
+    (Math.abs(area-2240)<1?' = 2240 ✓ <b>x = 2</b>！' : (area<2240?'（还不到 2240，再大一点）':'（超过 2240 了，往回调）'));
+  document.getElementById('outer12').setAttribute('stroke', Math.abs(area-2240)<1 ? '#2fae7d' : '#d6453d');
+}
+document.getElementById('sl12').addEventListener('input',function(){upd12();document.getElementById('solve12').style.display='none';});
+document.getElementById('btnSolve12').addEventListener('click',function(){document.getElementById('solve12').style.display='block';});
+upd12();
+
+/* ---------- 第13题 ---------- */
+var steps13=[
+ {t:'<b>第1步：</b>Rt△ABE 中，AB=8，AE=6 → BE = √(6²+8²) = <b>10</b>（经典 6-8-10！）',h:['lBE13']},
+ {t:'<b>第2步：</b>条件 AB = BG = 8 → <b>GE = BE − BG = 10 − 8 = 2</b>',h:['lBE13']},
+ {t:'<b>第3步：</b>AE∥BN → △AGE∽△NGB，相似比 EG:BG = 2:8 = 1:4 → <b>BN = 4AE = 24</b>，且 AG = (1/5)AN',h:['lAF13','lBE13']},
+ {t:'<b>第4步：</b>Rt△ABN 中 AN = √(8²+24²) = 8√10 → <b>AG = (1/5)×8√10 = 8√10/5</b>',h:['lAF13']},
+ {t:'<b>第5步：</b>BF 平分∠EBC 且 EM∥BN → ∠EBM = ∠M，故 <b>ME = BE = 10</b>，AM = AE+EM = 16',h:['lBF13','lBE13']},
+ {t:'<b>第6步：</b>AM∥BN → △AFM∽△NFB，AF:FN = AM:BN = 16:24 = 2:3 → AF = (2/5)×8√10 = <b>16√10/5</b>',h:['lAF13','lBF13']},
+ {t:'<b>第7步：</b>GF = AF − AG = 16√10/5 − 8√10/5 = <b>8√10/5</b> ✓（答案）',h:['lAF13']}
+];
+var cur13=-1;
+function show13(){
+  document.querySelectorAll('#svg13 line').forEach(function(l){l.classList.remove('hl');});
+  if(cur13>=0){steps13[cur13].h.forEach(function(id){document.getElementById(id).classList.add('hl');});}
+  document.getElementById('st13').innerHTML= cur13<0?'点击"下一步"开始逐步推演。图中：绿线=BE，紫线=BF（角平分线），红线=AF 延长交 BC 延长线于 N。':steps13[cur13].t;
+  document.getElementById('stepNo13').textContent=' 步骤 '+(cur13+1)+' / '+steps13.length;
+  document.getElementById('ans13').style.display = cur13===steps13.length-1 ? 'block':'none';
+}
+document.getElementById('next13').addEventListener('click',function(){if(cur13<steps13.length-1){cur13++;show13();}});
+document.getElementById('prev13').addEventListener('click',function(){if(cur13>-1){cur13--;show13();}});
+
+/* ---------- 第20(1) ---------- */
+var s20a=document.getElementById('st20a');
+document.getElementById('p1a').addEventListener('click',function(){
+  s20a.innerHTML='<b>①</b> DE = (1/3)CD = √7 → CD = 3√7；平行四边形中 <b>AB = CD = 3√7</b>。';
+  document.getElementById('tri20a').setAttribute('opacity',1);});
+document.getElementById('p1b').addEventListener('click',function(){
+  s20a.innerHTML='<b>②</b> AB∥CD → ∠PDE=∠PBA，又对顶角相等 → <b>△DEP∽△BAP</b>，相似比 DE:AB = 1:3。';
+  document.getElementById('tri20b').setAttribute('opacity',1);});
+document.getElementById('p1c').addEventListener('click',function(){
+  s20a.innerHTML='<b>③</b> DP:PB = 1:3，BP=6 → <b>DP = 2</b>。';});
+document.getElementById('p1d').addEventListener('click',function(){
+  s20a.innerHTML='<b>④</b> Rt△ABP：AP = √((3√7)²−6²) = √(63−36) = 3√3；Rt△ADP：<b>AD = √((3√3)²+2²) = √31</b> ✓';});
+
+/* ---------- 第20(2) ---------- */
+function upd20(){
+  var a=+document.getElementById('sl20').value/10;
+  var P={x:240,y:200};
+  var C={x:240,y:200-90*a}, Bp={x:240+120*a,y:200}, Dp={x:240-180*a,y:200};
+  setLine('lCE20',C.x,C.y,P.x,P.y);
+  setLine('lCB20',C.x,C.y,Bp.x,Bp.y);
+  setLine('lBD20',Dp.x,Dp.y,Bp.x,Bp.y);
+  var BC=Math.hypot(C.x-Bp.x,C.y-Bp.y), BP=Math.hypot(Bp.x-P.x,Bp.y-P.y),
+      DP=Math.hypot(Dp.x-P.x,Dp.y-P.y), BD=BP+DP;
+  document.getElementById('out20').innerHTML=
+    '取 EP=2a，由△BEP∽△DCP（比 2:3）得 CP=3a → CE=5a；CE=CB → <b>BC=5a</b>；Rt△BCP 中 BP=√(25−9)a=4a；DP=6a。<br>'+
+    '数值验证：BC='+BC.toFixed(0)+'，BD=BP+DP='+BP.toFixed(0)+'+'+DP.toFixed(0)+'=<b>'+BD.toFixed(0)+'</b>，BD/BC = <b>'+(BD/BC).toFixed(2)+'</b> = 2 ✓';
+}
+document.getElementById('sl20').addEventListener('input',upd20);
+upd20();
+
+/* ---------- 第20(3) ---------- */
+var c1txt='<b>情况① DE=2：</b>△DEP∽△BAP（比1:3）→ 设 EP=a，AP=3a，AE=4a。又△DEP∽△AED（公共角∠AED + 直角）→ DE² = EP·AE 即 2²=a·4a → a=1，AE=4。Rt△ADE：AD=√(AE²−DE²)=√(16−4)=<b>2√3</b>。';
+var c2txt='<b>情况② DE=4：</b>同理相似比 2:3 → 设 EP=2b，AP=3b，AE=5b。△DEP∽△AED → 4²=2b·5b → b=2√10/5，AE=2√10。Rt△ADE：AD=√(40−16)=<b>2√6</b>。<br>综上：AD = <b>2√3 或 2√6</b> ✓';
+function setCase(n){
+  document.getElementById('st20c').innerHTML = n===1?c1txt:c2txt;
+  document.getElementById('case1').classList.toggle('on',n===1);
+  document.getElementById('case2').classList.toggle('on',n===2);
+  document.getElementById('tDE20').textContent = n===1?'DE=2（CD的1/3处）':'DE=4（CD的2/3处）';
+  document.getElementById('ae20').setAttribute('x2', n===1?240:280);
+}
+document.getElementById('case1').addEventListener('click',function(){setCase(1);});
+document.getElementById('case2').addEventListener('click',function(){setCase(2);});
+setCase(1);
+
+/* ================= 通用步骤器 ================= */
+function mkSteps(cfg){
+  var cur=-1;
+  function paint(){
+    var svg=document.getElementById(cfg.svg);
+    if(svg) svg.querySelectorAll('.hl').forEach(function(e){e.classList.remove('hl');});
+    if(cur>=0 && cfg.steps[cur].h){cfg.steps[cur].h.forEach(function(id){var e=document.getElementById(id); if(e)e.classList.add('hl');});}
+    document.getElementById(cfg.out).innerHTML = cur<0 ? (cfg.intro||'点击"下一步"开始。') : cfg.steps[cur].t;
+    var no=document.getElementById(cfg.no); if(no) no.textContent=' 步骤 '+(cur+1)+' / '+cfg.steps.length;
+    if(cfg.done) document.getElementById(cfg.done).style.display = cur===cfg.steps.length-1?'block':'none';
+  }
+  document.getElementById(cfg.prev).addEventListener('click',function(){if(cur>-1){cur--;paint();}});
+  document.getElementById(cfg.next).addEventListener('click',function(){if(cur<cfg.steps.length-1){cur++;paint();}});
+  paint();
+}
+
+/* ================= 启动动画 & 设备选择 ================= */
+function applyMode(m, save){
+  document.body.classList.toggle('mobile', m==='mobile');
+  document.getElementById('fab').textContent = m==='mobile' ? '🖥️' : '📱';
+  if(save){ try{localStorage.setItem('devmode',m);}catch(e){} }
+}
+function closeSplash(){
+  var sp=document.getElementById('splash'); if(!sp||sp.classList.contains('gone'))return;
+  sp.classList.add('gone'); setTimeout(function(){ if(sp.parentNode) sp.remove(); }, 880);
+  var saved=null; try{saved=localStorage.getItem('devmode');}catch(e){}
+  if(saved){ applyMode(saved,false); document.getElementById('devOverlay').style.display='none'; }
+  else document.getElementById('devOverlay').style.display='flex';
+}
+setTimeout(closeSplash, 3200);
+document.getElementById('splash').addEventListener('click', closeSplash);
+document.getElementById('pickPC').addEventListener('click', function(){ applyMode('pc',true); document.getElementById('devOverlay').style.display='none'; });
+document.getElementById('pickMobile').addEventListener('click', function(){ applyMode('mobile',true); document.getElementById('devOverlay').style.display='none'; });
+document.getElementById('fab').addEventListener('click', function(){ applyMode(document.body.classList.contains('mobile')?'pc':'mobile', true); });
+
+/* ================= 第1题 ================= */
+document.querySelectorAll('#q1 .opt').forEach(function(b){
+  b.addEventListener('click', function(){
+    var ok = b.querySelector('.why').textContent.indexOf('✓')>=0;
+    b.classList.remove('ok','bad'); void b.offsetWidth; b.classList.add(ok?'ok':'bad');
+  });
+});
+
+/* ================= 第2题 ================= */
+function upd2(){
+  var AB=document.getElementById('sl2').value/10;
+  document.getElementById('vAB2').textContent=AB.toFixed(1);
+  var w=26*AB, Bx=50+w, Px=50+0.618*w;
+  document.getElementById('seg2').setAttribute('x2',Bx);
+  document.getElementById('cB2').setAttribute('cx',Bx);
+  document.getElementById('tB2').setAttribute('x',Bx-6);
+  document.getElementById('cP2').setAttribute('cx',Px);
+  document.getElementById('tP2').setAttribute('x',Px-8);
+  var AP=(Math.sqrt(5)-1)/2*AB;
+  document.getElementById('out2').innerHTML='AP = (√5−1)/2 × '+AB.toFixed(1)+' = <b>'+AP.toFixed(3)+'</b>'+(Math.abs(AB-2)<0.01?'<br>⭐ AB=2 时 AP = (√5−1)/2 × 2 = <b>√5 − 1 ≈ 2.236</b>，正好对应选项 B！':'<br>把滑块拖到 AB = 2 试试（题目给的条件）。');
+}
+document.getElementById('sl2').addEventListener('input',upd2); upd2();
+
+/* ================= 第3题 ================= */
+function upd3(){
+  var AB=document.getElementById('sl3').value/10;
+  document.getElementById('vAB3').textContent=AB.toFixed(1);
+  var BC=3*AB;
+  document.getElementById('out3').innerHTML='数格子：AB 跨 2 格，BC 跨 6 格 → AB:BC = 1:3<br>BC = 3 × '+AB.toFixed(1)+' = <b>'+BC.toFixed(1)+' cm</b>'+(Math.abs(BC-10.8)<0.01?' = 10.8 ✓ 故选 D':'（题目 AB=3.6 时即为答案 10.8）');
+}
+document.getElementById('sl3').addEventListener('input',upd3);
+document.getElementById('tg3').addEventListener('click',function(){
+  var a=document.getElementById('aux3'); a.setAttribute('opacity', a.getAttribute('opacity')==='0'?1:0);
+});
+upd3();
+
+/* ================= 第5题 ================= */
+mkSteps({svg:'q5',prev:'pr5',next:'nx5',no:'no5',out:'out5',intro:'点击"下一步"看韦达定理的应用。',
+steps:[
+ {t:'<b>第1步：</b>方程化为 x² + px + q = 0 的标准形式：x²−2x−3=0 中 p=−2，q=−3。'},
+ {t:'<b>第2步（韦达定理）：</b>x₁+x₂ = −p = <b>2</b>；x₁x₂ = q = <b>−3</b>。不需要真的解出方程！'},
+ {t:'<b>第3步（整体代入）：</b>x₁+x₂ − 2x₁x₂ = 2 − 2×(−3) = 2+6 = <b>8</b>，故选 D。'},
+ {t:'<b>第4步（检验）：</b>因式分解 (x−3)(x+1)=0 → 根为 3, −1。代入：3+(−1)−2×3×(−1) = 2+6 = 8 ✓'}
+]});
+
+/* ================= 第6题 ================= */
+function upd6(){
+  var n=+document.getElementById('sl6').value;
+  document.getElementById('vn6').textContent=n;
+  var g=n*(n-1);
+  document.getElementById('out6').innerHTML='总场次 = n(n−1) = '+n+'×'+(n-1)+' = <b>'+g+'</b> 场 '+(g===56?'<br>⭐ 正好 56 场！解 n(n−1)=56 得 n=8（n=−7 舍去），<span class="ans">故选 C</span>':(g<56?'<br>还不到 56，加点球队！':'<br>超过 56 了，往回拖…'));
+}
+document.getElementById('sl6').addEventListener('input',upd6); upd6();
+
+/* ================= 第9题 ================= */
+function upd9(){
+  var b=+document.getElementById('sl9').value;
+  document.getElementById('vb9').textContent=b;
+  var a=5*b/3, px=18;
+  document.getElementById('barA').setAttribute('width', a*px);
+  document.getElementById('barB').setAttribute('width', b*px);
+  document.getElementById('tBarA').textContent='a = '+a.toFixed(2);
+  document.getElementById('tBarB').textContent='b = '+b;
+  document.getElementById('out9').innerHTML='a/b = 5/3 ≈ '+(5/3).toFixed(3)+'<br>(a+b)/b = a/b + 1 = 5/3 + 1 = <b>8/3 ≈ '+(8/3).toFixed(3)+'</b> —— 无论 b 怎么变，结果都一样！';
+}
+document.getElementById('sl9').addEventListener('input',upd9); upd9();
+
+/* ================= 第10题 ================= */
+mkSteps({svg:'svg10',prev:'pr10',next:'nx10',no:'no10',out:'out10',intro:'点击"下一步"看构造全等三角形的过程。',
+steps:[
+ {t:'<b>第1步：</b>过 C 作 CE⊥x 轴于 E。只要求出 OE 和 CE 的长度，C 点坐标就出来了。',h:['triBCE']},
+ {t:'<b>第2步（找等角）：</b>∠ABO+∠BAO=90°，又 ∠ABO+∠EBC=90°（∠ABC=90°）→ <b>∠BAO=∠EBC</b>（同角的余角相等）。',h:['triABO','triBCE']},
+ {t:'<b>第3步（证全等）：</b>∠AOB=∠BEC=90°，AB=BC（正方形边长），∠BAO=∠EBC → <b>△ABO ≌ △BCE（AAS）</b>。',h:['triABO','triBCE']},
+ {t:'<b>第4步（读长度）：</b>由全等：EB = OA = 4，CE = OB = 3。',h:['triBCE']},
+ {t:'<b>第5步（求坐标）：</b>OE = EB − OB = 4−3 = 1；C 在 x 轴下方 → C 的纵坐标为 −CE = −3。<br>所以 <span class="ans">C(1, −3)</span> ✓',h:['triBCE']}
+]});
+
+/* ================= 第14题 ================= */
+mkSteps({svg:'q14',prev:'pr14a',next:'nx14a',out:'out14a',intro:'解 2x²−2x−1=0。点击"下一步"。',
+steps:[
+ {t:'<b>第1步：</b>确定系数：a=2，b=−2，c=−1。'},
+ {t:'<b>第2步：</b>算判别式：Δ = (−2)² − 4×2×(−1) = 4+8 = <b>12 &gt; 0</b> → 有两个不相等的实数根。'},
+ {t:'<b>第3步：</b>代求根公式：x = [2 ± √12] / 4 = (2 ± 2√3)/4 = <b>(1 ± √3)/2</b>'},
+ {t:'<b>第4步：</b>写出两根：x₁ = (1+√3)/2，x₂ = (1−√3)/2 ✓'}
+]});
+mkSteps({svg:'q14',prev:'pr14b',next:'nx14b',out:'out14b',intro:'解 (x−2)² = 3x−6。注意右边的 3x−6 可以提出 3！',
+steps:[
+ {t:'<b>第1步（移项）：</b>(x−2)² = 3x−6 = <b>3(x−2)</b>。别急着展开，两边都有 (x−2)！'},
+ {t:'<b>第2步（提公因式）：</b>(x−2)² − 3(x−2) = 0 → (x−2)[(x−2)−3] = 0 → <b>(x−2)(x−5) = 0</b>'},
+ {t:'<b>第3步：</b>x−2=0 或 x−5=0 → <b>x₁=2，x₂=5</b> ✓'},
+ {t:'<b>第4步（反思）：</b>若直接展开：x²−4x+4 = 3x−6 → x²−7x+10=0，也能做但计算量大。<b>先观察结构再动手</b>是解方程的好习惯。'}
+]});
+
+/* ================= 第15题 ================= */
+function upd15(){
+  var k=document.getElementById('sl15').value/20;
+  var A2=[-4*k,4*k], B2=[-6*k,-2*k], C2=[-4*k,0];
+  function X(x){return 42.667*x+320;} function Y(y){return (5.5-y)/9*400;}
+  document.getElementById('triA2').setAttribute('points', X(A2[0])+','+Y(A2[1])+' '+X(B2[0])+','+Y(B2[1])+' '+X(C2[0])+','+Y(C2[1]));
+  function lab(id,P,dx,dy,txt){var t=document.getElementById(id);t.setAttribute('x',X(P[0])+dx);t.setAttribute('y',Y(P[1])+dy);t.textContent=txt;}
+  function f(v){return (Math.round(v*10)/10).toString().replace('-','−');}
+  lab('tA2',A2,-30,-8,'A₂('+f(A2[0])+','+f(A2[1])+')');
+  lab('tB2x',B2,-52,16,'B₂('+f(B2[0])+','+f(B2[1])+')');
+  lab('tC2x',C2,-56,18,'C₂('+f(C2[0])+','+f(C2[1])+')');
+  var S=4*k*k;
+  document.getElementById('out15').innerHTML='相似比 = k = <b>'+k.toFixed(2)+'</b>（题目要求 1:2，即 k=0.5）<br>面积之比 = 相似比的平方：S₂ = 4k² = <b>'+S.toFixed(2)+'</b>'+(Math.abs(k-0.5)<0.01?'<br>⭐ k=0.5 时 S₂ = <b>1</b>，这就是第(3)问的答案！':'（把滑块拖到 k = 0.5）');
+}
+document.getElementById('sl15').addEventListener('input',upd15); upd15();
+
+/* ================= 第16题 ================= */
+function upd16(){
+  var BC=+document.getElementById('slBC').value, AH=+document.getElementById('slAH').value;
+  document.getElementById('vBC16').textContent=BC; document.getElementById('vAH16').textContent=AH;
+  var x=BC*AH/(BC+AH);
+  var Bx=70, Cx=70+3*BC, mid=(Bx+Cx)/2, By=290, Ay=290-3*AH;
+  document.getElementById('tri16').setAttribute('points', mid+','+Ay+' '+Bx+','+By+' '+Cx+','+By);
+  document.getElementById('ah16').setAttribute('x1',mid); document.getElementById('ah16').setAttribute('y1',Ay);
+  document.getElementById('ah16').setAttribute('x2',mid); document.getElementById('ah16').setAttribute('y2',By);
+  var sx=3*x, x0=mid-sx/2, y0=By-sx;
+  var sq=document.getElementById('sq16'); sq.setAttribute('x',x0); sq.setAttribute('y',y0); sq.setAttribute('width',sx); sq.setAttribute('height',sx);
+  document.getElementById('dg16').setAttribute('x1',x0); document.getElementById('dg16').setAttribute('y1',y0);
+  document.getElementById('dg16').setAttribute('x2',x0+sx); document.getElementById('dg16').setAttribute('y2',y0);
+  var tA=document.getElementById('tA16'); tA.setAttribute('x',mid-8); tA.setAttribute('y',Ay-8); tA.textContent='A';
+  var tC=document.getElementById('tC16'); tC.setAttribute('x',Cx-14); tC.setAttribute('y',308); tC.textContent='C';
+  var tx=document.getElementById('tx16'); tx.setAttribute('x',mid-30); tx.setAttribute('y',y0+sx/2+5); tx.textContent='x='+x.toFixed(1);
+  document.getElementById('out16').innerHTML='设正方形边长为 x：由 △ADG∽△ABC → <b>(AH−x)/AH = x/BC</b><br>即 ('+AH+'−x)/'+AH+' = x/'+BC+' → x = <b>'+x.toFixed(1)+' cm</b>'+(Math.abs(x-24)<0.05?'<br>⭐ 回到题目条件（BC=60, AH=40）：x = <b>24 cm</b>！':'（拖回 BC=60、AH=40 得到答案 24）');
+}
+document.getElementById('slBC').addEventListener('input',upd16);
+document.getElementById('slAH').addEventListener('input',upd16);
+upd16();
+
+/* ================= 第17题 ================= */
+function upd17a(){
+  var r=+document.getElementById('slR17').value;
+  document.getElementById('vr17').textContent=r;
+  var p1=40*(1-r/100), p2=40*(1-r/100)*(1-r/100);
+  document.getElementById('out17a').innerHTML='第一次后：'+p1.toFixed(2)+' 元 → 第二次后：<b>'+p2.toFixed(2)+'</b> 元 '+(Math.abs(p2-32.4)<0.05?'<br>⭐ 等于 32.4！40(1−x)²=32.4 → (1−x)²=0.81 → x = <b>10%</b>（x=1.9 舍）':'（目标 32.4，继续拖…）');
+}
+function upd17b(){
+  var y=+document.getElementById('slY17').value;
+  document.getElementById('vy17').textContent=y;
+  var profit=(10-y)*(48+8*y);
+  document.getElementById('out17b').innerHTML='每件利润 = '+(10-y)+' 元，每天销量 = '+(48+8*y)+' 件<br>总利润 = '+(10-y)+'×'+(48+8*y)+' = <b>'+profit+'</b> 元 '+(profit===504?'<br>⭐ 正好是 504 元！解方程得 y=1 或 y=3，点下面按钮看怎么取舍。':'（目标 504）');
+}
+document.getElementById('slR17').addEventListener('input',upd17a);
+document.getElementById('slY17').addEventListener('input',upd17b);
+document.getElementById('tg17').addEventListener('click',function(){var s=document.getElementById('st17');s.style.display=s.style.display==='none'?'block':'none';});
+upd17a(); upd17b();
+
+/* ================= 第18题 ================= */
+function fmtEq(a,b,c){
+  function t(coef,isFirst,prefix){
+    if(coef===0) return '';
+    var abs=Math.abs(coef), s;
+    if(isFirst){ s = coef<0?'−':''; }
+    else { s = coef<0?' − ':' + '; }
+    if(abs!==1||!prefix) s+=abs;
+    return s+prefix;
+  }
+  var r=t(a,true,'x²')+t(b,false,'x')+(c!==0?((c<0?' − ':' + ')+Math.abs(c)):'');
+  return (r===''?'0':r)+' = 0';
+}
+function upd18(){
+  var a=+document.getElementById('ina').value||0, b=+document.getElementById('inb').value||0, c=+document.getElementById('inc').value||0;
+  document.getElementById('out18a').innerHTML='原方程：<b>'+fmtEq(a,b,c)+'</b><br>对称方程（a 取反、常数项取反、一次项不变）：<b class="ans">'+fmtEq(-a,b,-c)+'</b><br>验证：a₁+a₂ = '+(a+-a)+' ✓，b₁=b₂ ✓，c₁+c₂ = '+(c+-c)+' ✓';
+}
+['ina','inb','inc'].forEach(function(id){document.getElementById(id).addEventListener('input',upd18);});
+upd18();
+mkSteps({svg:'q18',prev:'pr18',next:'nx18',out:'out18b',intro:'方程 8x²+(m−3)x−n=0 与 −8x²−x=1 互为对称方程。点击"下一步"。',
+steps:[
+ {t:'<b>第1步：</b>把第二个方程化为一般式：−8x²−x = 1 移项 → <b>−8x² − x − 1 = 0</b>'},
+ {t:'<b>第2步（比一次项）：</b>要求 b₁=b₂：m−3 = −1 → <b>m = 2</b>'},
+ {t:'<b>第3步（比常数项）：</b>要求 c₁+c₂=0：(−n)+(−1)=0 → <b>n = −1</b>'},
+ {t:'<b>第4步：</b>(m+n)² = (2−1)² = <span class="ans">1</span> ✓'}
+]});
+
+/* ================= 第19题 ================= */
+mkSteps({svg:'svg19',prev:'pr19',next:'nx19',no:'no19',out:'out19',intro:'点击"下一步"，先看证明矩形，再求 AE。',
+steps:[
+ {t:'<b>第1步：</b>菱形对角线互相垂直平分 → OA=OC，AC⊥BD，∠COD=90°。',h:['rectOCED']},
+ {t:'<b>第2步（证平行四边形）：</b>DE = ½AC = OC，且 DE∥AC 即 DE∥OC → 四边形 OCED 是<b>平行四边形</b>（一组对边平行且相等）。',h:['rectOCED']},
+ {t:'<b>第3步（证矩形）：</b>平行四边形 OCED 中 ∠COD = 90° → <b>矩形 OCED</b> ✓（第(1)问完成）',h:['rectOCED']},
+ {t:'<b>第4步（用 60°）：</b>∠BCD=60°，对角线平分对角 → ∠DCO=30°。Rt△COD 中斜边 CD=4 → OD=2，OC=2√3，故 AC=2OC=4√3。',h:['rectOCED']},
+ {t:'<b>第5步（求 AE）：</b>矩形对边相等：EC=OD=2。Rt△AEC 中：AE = √(EC²+AC²) = √(4+48) = <span class="ans">2√13</span> ✓',h:['rectOCED']}
+]});
+</script>
+</body>
+</html>
